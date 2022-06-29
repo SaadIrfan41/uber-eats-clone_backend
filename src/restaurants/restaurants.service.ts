@@ -1,7 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { User } from 'src/users/entities/user.entity';
-import { AllRestaurantInput } from './dto/all-restaurant.input';
+import {
+  AllRestaurantInput,
+  AllRestaurantOutput,
+} from './dto/all-restaurant.input';
 import { CreateRestaurantInput } from './dto/create-restaurant.input';
 import { DeleteRestaurantInput } from './dto/delete-restaurant.input';
 import { SearchRestaurantInput } from './dto/search-restaurant.input';
@@ -94,7 +97,9 @@ export class RestaurantsService {
     }
   }
 
-  async findAllRestaurants(allRestaurantInput: AllRestaurantInput) {
+  async findAllRestaurants(
+    allRestaurantInput: AllRestaurantInput,
+  ): Promise<AllRestaurantOutput> {
     try {
       const [totalRestaurants, restaurants] = await this.prisma.$transaction([
         this.prisma.restaurant.count(),
@@ -107,10 +112,19 @@ export class RestaurantsService {
               createdAt: 'desc',
             },
           ],
+          include: {
+            // Category: true,
+            Category: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
         }),
       ]);
 
-      // console.log(restaurants);
+      console.log(restaurants);
       return {
         restaurants,
         totalPages: Math.ceil(totalRestaurants / 3),

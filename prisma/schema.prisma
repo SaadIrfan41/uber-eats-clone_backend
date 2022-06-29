@@ -39,6 +39,7 @@ model Restaurant {
   categoryId String?   @db.ObjectId
   User       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId    String    @db.ObjectId
+  dishes     Dish[]
 }
 
 model Category {
@@ -50,6 +51,19 @@ model Category {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   restaurantId String?      @db.ObjectId
+}
+
+model Dish {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  photo       String?
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String?     @db.ObjectId
 }
 
 enum Role {

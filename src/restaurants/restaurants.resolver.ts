@@ -45,7 +45,9 @@ export class RestaurantsResolver {
   }
 
   @Query(() => AllRestaurantOutput, { name: 'restaurants' })
-  findAll(@Args('AllRestaurantInput') allRestaurantInput: AllRestaurantInput) {
+  findAll(
+    @Args('AllRestaurantInput') allRestaurantInput: AllRestaurantInput,
+  ): Promise<AllRestaurantOutput> {
     return this.restaurantsService.findAllRestaurants(allRestaurantInput);
   }
   @Query(() => SearchRestaurantOutput, { name: 'searchRestaurant' })
