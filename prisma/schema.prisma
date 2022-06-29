@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+
+}
+
+model User {
+
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String       @unique
+  username      String       @unique
+  profilePicUrl String       @default("https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png")
+  role          Role         @default(customer)
+  password      String
+  restaurants   Restaurant[]
+  // // refreshToken  String?
+  // accessToken   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+}
+
+model Restaurant {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String    @unique
+  coverImage String
+  address    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?   @db.ObjectId
+  User       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId    String    @db.ObjectId
+}
+
+model Category {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String       @unique
+  image        String?
+  slug         String       @unique
+  restaurants  Restaurant[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  restaurantId String?      @db.ObjectId
+}
+
+enum Role {
+  customer
+  restaurantOwner
+}
