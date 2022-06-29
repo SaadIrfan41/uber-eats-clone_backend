@@ -97,7 +97,9 @@ export class RestaurantsService {
     }
   }
 
-  async findAllRestaurants(allRestaurantInput: AllRestaurantInput) {
+  async findAllRestaurants(
+    allRestaurantInput: AllRestaurantInput,
+  ): Promise<any> {
     try {
       const [totalRestaurants, restaurants] = await this.prisma.$transaction([
         this.prisma.restaurant.count(),
